@@ -3,14 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Перенаправление на мессенджеры</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: calc(100% - 20px);
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #links {
+            margin-top: 20px;
+        }
+        #links a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+        #links a:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 </head>
 <body>
-    <h2>Введите номер телефона в международном формате:</h2>
-    <input type="text" id="phone" placeholder="Введите номер телефона">
-    <button onclick="generateLinks()">Сгенерировать ссылки</button>
+    <div class="container">
+        <h2>Введите номер телефона в международном формате:</h2>
+        <input type="text" id="phone" placeholder="Введите номер телефона">
+        <button onclick="generateLinks()">Сгенерировать ссылки</button>
 
-    <h2>Ссылки на мессенджеры:</h2>
-    <div id="links"></div>
+        <h2>Ссылки на мессенджеры:</h2>
+        <div id="links"></div>
+    </div>
 
     <script>
         function generateLinks() {
@@ -21,16 +81,16 @@
             if (phone.trim() !== "") {
                 // Генерируем ссылку на WhatsApp
                 var whatsappLink = '<a href="https://wa.me/' + phone + '" target="_blank">WhatsApp</a>';
-                linksHTML += '<p>' + whatsappLink + '</p>';
+                linksHTML += whatsappLink;
 
                 // Генерируем ссылку на Viber
                 var viberPhone = phone.replace("+", "%2B").replace(/[-()\s]/g, "");
                 var viberLink = '<a href="viber://chat?number=' + viberPhone + '" target="_blank">Viber</a>';
-                linksHTML += '<p>' + viberLink + '</p>';
+                linksHTML += viberLink;
 
                 // Генерируем ссылку на Telegram
                 var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
-                linksHTML += '<p>' + telegramLink + '</p>';
+                linksHTML += telegramLink;
                 
                 // Другие мессенджеры можно добавить аналогичным образом
 
