@@ -43,6 +43,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-bottom: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -58,27 +59,74 @@
             text-decoration: none;
             color: #333;
             border-radius: 5px;
+            transition: background-color 0.5s;
         }
         #links a:hover {
             background-color: #e0e0e0;
+        }
+        #history {
+            margin-top: 20px;
+        }
+        #history p {
+            margin: 5px 0;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: background-color 0.5s;
+        }
+        #history p:hover {
+            background-color: #e0e0e0;
+        }
+        #update {
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: opacity 0.5s;
+        }
+        .fadeout {
+            opacity: 0;
+        }
+        .highlight {
+            background-color: #ff0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Введите номер телефона в международном формате:</h2>
-        <input type="text" id="phone" placeholder="+380*********">
+        <input type="text" id="phone" placeholder="Введите номер телефона">
         <button onclick="generateLinks()">Сгенерировать ссылки</button>
 
         <h2>Ссылки на мессенджеры:</h2>
         <div id="links"></div>
+
+        <h2>История генерации ссылок:</h2>
+        <div id="history"></div>
+        <button onclick="clearHistory()">Очистить историю</button>
+
+        <div id="update"></div>
     </div>
 
     <script>
+        window.onload = function() {
+            var savedHistory = localStorage.getItem('linksHistory');
+            if (savedHistory) {
+                document.getElementById('history').innerHTML = savedHistory;
+            }
+        };
+
         function generateLinks() {
             var phone = document.getElementById("phone").value;
             var linksDiv = document.getElementById("links");
+            var historyDiv = document.getElementById("history");
+            var updateDiv = document.getElementById("update");
             var linksHTML = "";
+            var historyHTML = "";
 
             if (phone.trim() !== "") {
                 // Генерируем ссылку на WhatsApp
@@ -94,12 +142,83 @@
                 var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
                 linksHTML += telegramLink;
                 
-                // Другие мессенджеры можно добавить аналогичным образом
+                // Добавляем текущий номер в историю
+                historyHTML += '<p onclick="showLinks(this, \'' + phone + '\')">' + phone + '</p>';
 
+                // Добавляем новые ссылки в соответствующие div'ы
                 linksDiv.innerHTML = linksHTML;
+                historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
+
+                // Сохраняем историю в localStorage
+                localStorage.setItem('linksHistory', historyDiv.innerHTML);
+
+                // Показываем информацию об обновлении
+                updateDiv.innerText = "Ссылки обновлены";
+                updateDiv.classList.remove("fadeout");
+                setTimeout(function(){
+                    updateDiv.classList.add("fadeout");
+                }, 500);
+
+                // Анимация кнопок
+                animateButtons();
             } else {
                 linksDiv.innerHTML = "<p>Введите номер телефона</p>";
             }
+        }
+
+        function animateButtons() {
+            var buttons = document.querySelectorAll('#links a');
+            buttons.forEach(function(button) {
+                if (button.href.includes("https://wa.me/") || button.href.includes("viber://chat?number=") || button.href.includes("tg://resolve?domain=")) {
+                    button.classList.add("highlight");
+                    setTimeout(function(){
+                        button.classList.remove("highlight");
+                    }, 500);
+                }
+            });
+        }
+
+        function showLinks(element, phone) {
+            var linksDiv = document.getElementById("links");
+            var linksHTML = "";
+
+            // Генерируем ссылку на WhatsApp
+            var whatsappLink = '<a href="https://wa.me/' + phone + '" target="_blank">WhatsApp</a>';
+            linksHTML += whatsappLink;
+
+            // Генерируем ссылку на Viber
+            var viberPhone = phone.replace("+", "%2B").replace(/[-()\s]/g, "");
+            var viberLink = '<a href="viber://chat?number=' + viberPhone + '" target="_blank">Viber</a>';
+            linksHTML += viberLink;
+
+            // Генерируем ссылку на Telegram
+            var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
+            linksHTML += telegramLink;
+            
+            // Добавляем новые ссылки в соответствующий div
+            linksDiv.innerHTML = linksHTML;
+
+            // Подсветим элемент на короткое время
+            element.classList.add("highlight");
+            setTimeout(function(){
+                element.classList.remove("highlight");
+            }, 500);
+
+            // Показываем информацию об обновлении
+            var updateDiv = document.getElementById("update");
+            updateDiv.innerText = "Ссылки обновлены";
+            updateDiv.classList.remove("fadeout");
+            setTimeout(function(){
+                updateDiv.classList.add("fadeout");
+            }, 500);
+
+            // Анимация кнопок
+            animateButtons();
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('linksHistory');
+            document.getElementById("history").innerHTML = "";
         }
     </script>
 </body>
