@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Перенаправление на мессенджеры</title>
+</head>
+<body>
+    <h2>Введите номер телефона в международном формате:</h2>
+    <input type="text" id="phone" placeholder="Введите номер телефона">
+    <button onclick="generateLinks()">Сгенерировать ссылки</button>
+
+    <h2>Ссылки на мессенджеры:</h2>
+    <div id="links"></div>
+
+    <script>
+        function generateLinks() {
+            var phone = document.getElementById("phone").value;
+            var linksDiv = document.getElementById("links");
+            var linksHTML = "";
+
+            if (phone.trim() !== "") {
+                // Генерируем ссылку на WhatsApp
+                var whatsappLink = '<a href="https://wa.me/' + phone + '" target="_blank">WhatsApp</a>';
+                linksHTML += '<p>' + whatsappLink + '</p>';
+
+                // Генерируем ссылку на Viber
+                var viberPhone = phone.replace("+", "%2B").replace(/[-()\s]/g, "");
+                var viberLink = '<a href="viber://chat?number=' + viberPhone + '" target="_blank">Viber</a>';
+                linksHTML += '<p>' + viberLink + '</p>';
+
+                // Генерируем ссылку на Telegram
+                var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
+                linksHTML += '<p>' + telegramLink + '</p>';
+                
+                // Другие мессенджеры можно добавить аналогичным образом
+
+                linksDiv.innerHTML = linksHTML;
+            } else {
+                linksDiv.innerHTML = "<p>Введите номер телефона</p>";
+            }
+        }
+    </script>
+</body>
+</html>
