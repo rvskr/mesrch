@@ -8,20 +8,28 @@
 </head>
 <body>
     <div class="container">
-        <h2>Введите номер телефона в международном формате:</h2>
-        <input type="text" id="phone" placeholder="Введите номер телефона">
-        <button onclick="generateLinks()">Сгенерировать ссылки</button>
+        <h1>Генератор ссылок для мессенджеров</h1>
+        <div class="form">
+            <label for="phone">Введите номер телефона:</label>
+            <input type="tel" id="phone" placeholder="Введите номер телефона">
+            <button onclick="generateLinks()">Сгенерировать ссылки</button>
+        </div>
 
-        <h2>Ссылки на мессенджеры:</h2>
-        <div id="links"></div>
+        <div class="links">
+            <h2>Ссылки на мессенджеры:</h2>
+            <div id="links"></div>
+        </div>
 
-        <h2>История генерации ссылок:</h2>
-        <div id="history"></div>
-        <button onclick="clearHistory()">Очистить историю</button>
+        <div class="history">
+            <h2>История генерации ссылок:</h2>
+            <div id="history"></div>
+            <button onclick="clearHistory()">Очистить историю</button>
+        </div>
 
         <div id="update"></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/1.7.50/libphonenumber-js.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

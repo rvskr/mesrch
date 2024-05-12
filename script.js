@@ -6,101 +6,90 @@ window.onload = function() {
 };
 
 function generateLinks() {
-    var phone = document.getElementById("phone").value;
+    var phoneInput = document.getElementById("phone");
+    var phone = phoneInput.value.trim();
     var linksDiv = document.getElementById("links");
     var historyDiv = document.getElementById("history");
-    var updateDiv = document.getElementById("update");
-    var linksHTML = "";
-    var historyHTML = "";
 
-    // Проверка, что введен номер телефона
-    if (phone.trim() !== "") {
-        // Проверка и добавление "+" перед номером телефона
+    if (phone !== "") {
+        // Удаление всех пробелов из номера телефона
+        phone = phone.replace(/\s/g, "");
+
+        // Добавление кода страны, если его нет
         if (!phone.startsWith("+")) {
-            phone = "+" + phone;
+            // Получаем код страны из браузера
+            var countryCode = getCountryCode();
+            phone = "+" + countryCode + phone;
         }
 
-        // Генерация ссылок на мессенджеры
-        var whatsappLink = '<a href="https://wa.me/' + phone + '" target="_blank">WhatsApp</a>';
-        linksHTML += whatsappLink;
+        // Извлечение кода страны из номера телефона
+        var country = getCountryCodeFromPhone(phone);
+        phone = "+" + country + phone.replace(/\D/g, '');
 
-        var viberPhone = phone.replace("+", "%2B").replace(/[-()\s]/g, "");
-        var viberLink = '<a href="viber://chat?number=' + viberPhone + '" target="_blank">Viber</a>';
-        linksHTML += viberLink;
+        var linksHTML = generateLink("WhatsApp", "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phone), "whatsapp");
+        linksHTML += generateLink("Viber", "viber://chat?number=" + encodeURIComponent(phone), "viber");
+        linksHTML += generateLink("Telegram", "https://t.me/" + encodeURIComponent(phone), "telegram");
 
-        var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
-        linksHTML += telegramLink;
-        
-        // Добавление текущего номера в историю
-        historyHTML += '<p onclick="showLinks(this, \'' + phone + '\')">' + phone + '</p>';
+        var historyHTML = generateHistoryEntry(phone);
 
-        // Отображение новых ссылок
         linksDiv.innerHTML = linksHTML;
         historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
 
-        // Сохранение истории в localStorage
         localStorage.setItem('linksHistory', historyDiv.innerHTML);
 
-        // Отображение информации об обновлении
-        updateDiv.innerText = "Ссылки обновлены";
-        updateDiv.classList.remove("fadeout");
-        setTimeout(function(){
-            updateDiv.classList.add("fadeout");
-        }, 500);
-
-        // Анимация кнопок
-        animateButtons();
+        showUpdateMessage();
     } else {
-        // Вывод сообщения об ошибке, если номер телефона не введен
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
 }
 
-function animateButtons() {
-    var buttons = document.querySelectorAll('#links a');
-    buttons.forEach(function(button) {
-        if (button.href.includes("https://wa.me/") || button.href.includes("viber://chat?number=") || button.href.includes("tg://resolve?domain=")) {
-            button.classList.add("highlight");
-            setTimeout(function(){
-                button.classList.remove("highlight");
-            }, 500);
-        }
-    });
+function generateLink(name, url, id) {
+    return '<a href="' + url + '" target="_blank" id="' + id + '">' + name + '</a>';
+}
+
+function generateHistoryEntry(phone) {
+    return '<p onclick="showLinks(this, \'' + phone + '\')">' + phone + '</p>';
+}
+
+function getCountryCode() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://ipinfo.io/json", false);
+    xhr.send();
+
+    if (xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+        var countryCode = response.country;
+        return countryCode;
+    } else {
+        console.error("Error getting country code:", xhr.status);
+        return null;
+    }
+}
+
+function getCountryCodeFromPhone(phone) {
+    // Регулярное выражение для извлечения кода страны
+    var countryCodeRegex = /^\+(\d{1,3})/;
+    var match = phone.match(countryCodeRegex);
+    return match ? match[1] : '';
 }
 
 function showLinks(element, phone) {
     var linksDiv = document.getElementById("links");
-    var linksHTML = "";
-
-    var whatsappLink = '<a href="https://wa.me/' + phone + '" target="_blank">WhatsApp</a>';
-    linksHTML += whatsappLink;
-
-    var viberPhone = phone.replace("+", "%2B").replace(/[-()\s]/g, "");
-    var viberLink = '<a href="viber://chat?number=' + viberPhone + '" target="_blank">Viber</a>';
-    linksHTML += viberLink;
-
-    var telegramLink = '<a href="tg://resolve?domain=' + phone + '" target="_blank">Telegram</a>';
-    linksHTML += telegramLink;
+    var linksHTML = generateLink("WhatsApp", "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phone), "whatsapp") +
+                    generateLink("Viber", "viber://chat?number=" + encodeURIComponent(phone), "viber") +
+                    generateLink("Telegram", "https://t.me/" + encodeURIComponent(phone), "telegram");
     
-    // Отображение новых ссылок
     linksDiv.innerHTML = linksHTML;
 
-    // Подсветка элемента на короткое время
-    element.classList.add("highlight");
-    setTimeout(function(){
-        element.classList.remove("highlight");
-    }, 500);
+    showUpdateMessage();
+}
 
-    // Отображение информации об обновлении
+function showUpdateMessage() {
     var updateDiv = document.getElementById("update");
     updateDiv.innerText = "Ссылки обновлены";
-    updateDiv.classList.remove("fadeout");
     setTimeout(function(){
-        updateDiv.classList.add("fadeout");
-    }, 500);
-
-    // Анимация кнопок
-    animateButtons();
+        updateDiv.innerText = "";
+    }, 2000);
 }
 
 function clearHistory() {
