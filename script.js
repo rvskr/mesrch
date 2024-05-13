@@ -15,13 +15,8 @@ async function generateLinks() {
     var historyDiv = document.getElementById("history");
 
     if (phone !== "") {
-        // Удаление всех пробелов из номера телефона
-        phone = phone.replace(/\s/g, "");
-
-        // Добавление мобильного кода страны, если его нет
-        if (!phone.startsWith("+")) {
-            phone = "+" + phone;
-        }
+        // Приведение номера телефона к единому формату
+        phone = normalizePhoneNumber(phone);
 
         // Генерация HTML для ссылок
         var linksHTML = generateLink("WhatsApp", "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phone), "whatsapp");
@@ -43,6 +38,27 @@ async function generateLinks() {
     } else {
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
+}
+
+// Функция для приведения номера телефона к единому формату
+function normalizePhoneNumber(phone) {
+    // Удаление всех нецифровых символов
+    phone = phone.replace(/\D/g, "");
+
+    // Если номер начинается с 0, добавляем код страны +380
+    if (phone.startsWith("0")) {
+        phone = "380" + phone.slice(1);
+    }
+    // Если номер начинается с 8, добавляем код страны +7 (для России)
+    else if (phone.startsWith("8")) {
+        phone = "7" + phone.slice(1);
+    }
+    // Если номер начинается с 9, добавляем код страны +7 (для Казахстана)
+    else if (phone.startsWith("9")) {
+        phone = "7" + phone;
+    }
+
+    return phone;
 }
 
 // Функция генерации HTML для ссылки
