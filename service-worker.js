@@ -9,7 +9,6 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', function(event) {
-  // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
@@ -27,7 +26,27 @@ self.addEventListener('fetch', function(event) {
         if (response) {
           return response;
         }
-        return fetch(event.request);
+        
+        // Если ресурса нет в кэше, загружаем его из сети
+        return fetch(event.request)
+          .then(function(response) {
+            // Проверяем, является ли ответ валидным
+            if(!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Клонируем ответ, так как он может быть использован только один раз
+            var responseToCache = response.clone();
+
+            // Кэшируем загруженный ресурс
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
       }
     )
   );
