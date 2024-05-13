@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Перенаправление на мессенджеры</title>
+    <title>Генератор ссылок для мессенджеров</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
@@ -17,10 +16,7 @@
             <button onclick="generateLinks()">Сгенерировать ссылки</button>
         </div>
 
-        <div class="links">
-            <h2>Ссылки на мессенджеры:</h2>
-            <div id="links"></div>
-        </div>
+        <div class="links" id="links"></div>
 
         <div class="history">
             <h2>История генерации ссылок:</h2>
@@ -31,8 +27,8 @@
         <div id="update"></div>
     </div>
 
+    <script src="service-worker.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/1.7.50/libphonenumber-js.min.js"></script>
     <script src="script.js"></script>
 </body>
-</html
->
+</html>
