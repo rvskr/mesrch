@@ -47,7 +47,10 @@ self.addEventListener('fetch', function(event) {
             return response;
           }
         );
-      }
-    )
+      })
+      .catch(function() {
+        // При отсутствии соединения с сетью, возвращаем ресурс из кэша
+        return caches.match(event.request);
+      })
   );
 });
