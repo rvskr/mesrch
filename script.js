@@ -45,17 +45,18 @@ function normalizePhoneNumber(phone) {
     // Удаление всех нецифровых символов
     phone = phone.replace(/\D/g, "");
 
-    // Если номер начинается с 0, добавляем код страны +380
-    if (phone.startsWith("0")) {
-        phone = "380" + phone.slice(1);
+    // Если номер не начинается с "+", добавляем символ "+"
+    if (!phone.startsWith("+")) {
+        phone = "+" + phone;
     }
-    // Если номер начинается с 8, добавляем код страны +7 (для России)
-    else if (phone.startsWith("8")) {
-        phone = "7" + phone.slice(1);
+
+    // Если номер начинается с "+0", заменяем на "+380"
+    if (phone.startsWith("+0")) {
+        phone = "+380" + phone.slice(2);
     }
-    // Если номер начинается с 9, добавляем код страны +7 (для Казахстана)
-    else if (phone.startsWith("9")) {
-        phone = "7" + phone;
+    // Если номер начинается с "+8" и не содержит код страны, добавляем код страны +7 (для России)
+    else if (phone.startsWith("+8") && phone.length === 11) {
+        phone = "+7" + phone.slice(2);
     }
 
     return phone;
