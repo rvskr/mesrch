@@ -9,13 +9,13 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', function(event) {
-  console.log('Attempting to install service worker and cache static assets');
-  
+  console.log('Service worker installing...');
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache.map(url => new Request(url, {cache: "no-store"})))
+        return cache.addAll(urlsToCache.map(url => new Request(url, { cache: "no-store" })))
           .then(() => console.log('Assets cached successfully'))
           .catch(error => console.error('Failed to cache assets:', error));
       })
