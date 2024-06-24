@@ -1,0 +1,9 @@
+{
+    "name": "Генератор ссылок",
+    "short_name": "Номера",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2196f3"
+  }
+  
