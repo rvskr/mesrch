@@ -9,7 +9,27 @@ window.onload = function() {
 
     // Проверяем буфер обмена при загрузке страницы
     checkClipboardForPhoneNumber();
+
+    // Подсветка текущего номера в истории, если он есть
+    highlightCurrentPhoneNumber();
 };
+
+// Функция для подсветки текущего номера в истории при загрузке страницы
+function highlightCurrentPhoneNumber() {
+    var historyItems = document.querySelectorAll('.history-item');
+    var savedPhone = localStorage.getItem('lastPhoneNumber');
+
+    if (savedPhone) {
+        var currentHistoryItem = Array.from(historyItems).find(item => item.innerText.trim() === savedPhone);
+        if (currentHistoryItem) {
+            // Удаление подсветки со всех элементов истории
+            historyItems.forEach(item => item.classList.remove('selected'));
+
+            // Подсветка выбранного элемента истории
+            currentHistoryItem.classList.add('selected');
+        }
+    }
+}
 
 // Функция проверки буфера обмена на наличие номера телефона
 async function checkClipboardForPhoneNumber() {
@@ -45,6 +65,7 @@ async function pasteFromClipboard() {
         alert('Не удалось прочитать буфер обмена.');
     }
 }
+
 // Функция генерации ссылок
 async function generateLinks() {
     var phoneInput = document.getElementById("phone");
@@ -83,6 +104,9 @@ async function generateLinks() {
             var newHistoryItem = historyDiv.querySelector('.history-item');
             newHistoryItem.classList.add('selected');
 
+            // Сохранение последнего использованного номера в локальное хранилище
+            localStorage.setItem('lastPhoneNumber', phone);
+
             // Сохранение истории в локальном хранилище
             localStorage.setItem('linksHistory', historyDiv.innerHTML);
 
@@ -96,8 +120,6 @@ async function generateLinks() {
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
 }
-
-
 
 // Функция для приведения номера телефона к единому формату
 function normalizePhoneNumber(phone) {
@@ -162,7 +184,6 @@ function showLinks(element, phone) {
     // Отображение сообщения об обновлении
     showUpdateMessage();
 }
-
 
 // Функция отображения сообщения об обновлении
 function showUpdateMessage() {
