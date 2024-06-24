@@ -14,7 +14,6 @@ window.onload = function() {
     // Подсветка текущего номера в истории, если он есть
     highlightCurrentPhoneNumber();
 };
-
 // Функция для подсветки текущего номера в истории при загрузке страницы
 function highlightCurrentPhoneNumber() {
     var historyItems = document.querySelectorAll('.history-item');
@@ -23,14 +22,14 @@ function highlightCurrentPhoneNumber() {
     if (savedPhone) {
         var currentHistoryItem = Array.from(historyItems).find(item => item.innerText.trim() === savedPhone);
         if (currentHistoryItem) {
-            // Удаление подсветки со всех элементов истории
+            // Удаление класса .selected у всех элементов истории
             historyItems.forEach(item => item.classList.remove('selected'));
-
-            // Подсветка выбранного элемента истории
-            currentHistoryItem.classList.add('selected');
         }
     }
 }
+
+
+
 
 // Функция проверки буфера обмена на наличие номера телефона
 async function checkClipboardForPhoneNumber() {
@@ -103,7 +102,7 @@ async function generateLinks() {
 
             // Установка класса selected для нового элемента истории
             var newHistoryItem = historyDiv.querySelector('.history-item');
-            newHistoryItem.classList.add('selected');
+            newHistoryItem.classList.add('selected'); // Убрано из этой части кода, т.к. установка будет только при активном выборе
 
             // Сохранение последнего использованного номера в локальное хранилище
             localStorage.setItem('lastPhoneNumber', phone);
@@ -121,6 +120,7 @@ async function generateLinks() {
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
 }
+
 
 // Функция для приведения номера телефона к единому формату
 function normalizePhoneNumber(phone) {
