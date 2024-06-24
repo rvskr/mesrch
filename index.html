@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -35,3 +36,39 @@
     <script src="script.js"></script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор ссылок для мессенджеров</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор ссылок для мессенджеров</h1>
+        <div class="form">
+            <label for="phone">Введите номер телефона:</label>
+            <input type="tel" id="phone" placeholder="Введите номер телефона">
+            <button onclick="generateLinks()">Сгенерировать ссылки</button>
+        </div>
+
+        <div class="links" id="links"></div>
+
+        <div class="history">
+            <h2>История генерации ссылок:</h2>
+            <div id="history"></div>
+            <button onclick="clearHistory()">Очистить историю</button>
+        </div>
+
+        <div id="update"></div>
+    </div>
+
+    <script src="service-worker.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/1.7.50/libphonenumber-js.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+>>>>>>> 93cb679f8a3d735b94a42d8352ab34fe67c5c7fb
