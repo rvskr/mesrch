@@ -5,6 +5,7 @@ window.onload = function() {
     var savedHistory = localStorage.getItem('linksHistory');
     if (savedHistory) {
         document.getElementById('history').innerHTML = savedHistory;
+        
     }
 
     // Проверяем буфер обмена при загрузке страницы

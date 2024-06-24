@@ -1,7 +1,7 @@
 {
     "name": "Генератор ссылок",
     "short_name": "Номера",
-    "start_url": "/mesrch/ndex.html",
+    "start_url": "/mesrch/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#2196f3"
