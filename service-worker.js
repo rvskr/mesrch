@@ -37,17 +37,20 @@ self.addEventListener('fetch', function(event) {
     caches.match(event.request)
       .then(function(response) {
         if (response) {
-          return response;
+          return response; // Возвращаем ресурс из кэша, если он есть
         }
         
+        // Если ресурса нет в кэше, пытаемся загрузить его из сети
         return fetch(event.request)
           .then(function(response) {
+            // Проверяем, что ответ валидный
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
             var responseToCache = response.clone();
 
+            // Кэшируем загруженный ресурс
             caches.open(CACHE_NAME)
               .then(function(cache) {
                 cache.put(event.request, responseToCache);
@@ -56,6 +59,7 @@ self.addEventListener('fetch', function(event) {
             return response;
           })
           .catch(function() {
+            // При ошибке загрузки из сети, возвращаем ресурс из кэша
             return caches.match(event.request);
           });
       })
