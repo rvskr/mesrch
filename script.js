@@ -66,9 +66,6 @@ async function generateLinks() {
 
             // Подсветка выбранного элемента истории
             alreadyExists.classList.add('selected');
-
-            // Показываем ссылки для выбранного номера
-            showLinks(alreadyExists, phone);
         } else {
             // Генерация HTML для ссылок
             var linksHTML = generateLink("WhatsApp", "https://api.whatsapp.com/send?phone=" + encodeURIComponent(phone), "whatsapp");
@@ -82,12 +79,19 @@ async function generateLinks() {
             linksDiv.innerHTML = linksHTML;
             historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
 
+            // Установка класса selected для нового элемента истории
+            var newHistoryItem = historyDiv.querySelector('.history-item');
+            newHistoryItem.classList.add('selected');
+
             // Сохранение истории в локальном хранилище
             localStorage.setItem('linksHistory', historyDiv.innerHTML);
 
             // Отображение сообщения об обновлении
             showUpdateMessage();
         }
+
+        // Показываем ссылки для выбранного номера
+        showLinks(historyDiv.querySelector('.selected'), phone);
     } else {
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
