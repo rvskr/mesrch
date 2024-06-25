@@ -1,11 +1,10 @@
-const CACHE_NAME = 'links-generator-cache-v1';
+const CACHE_NAME = 'links-generator-cache-v1.1'; // Обновите версию кэша
 const urlsToCache = [
-  '/',
+  '/mesrch/',
   '/mesrch/index.html',
   '/mesrch/script.js',
   '/mesrch/styles.css',
   '/mesrch/manifest.json',
-  'icon.png'
 ];
 
 self.addEventListener('install', function(event) {
