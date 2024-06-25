@@ -160,11 +160,15 @@ function generateHistoryEntry(phone, exists) {
         var timeMatch = existingItem.innerText.match(/\(([^)]+)\)( => \(([^)]+)\))?/);
         if (timeMatch) {
             var oldTime = timeMatch[1];
-            var previousTime = timeMatch[3] ? timeMatch[3] : currentTime;
+            var previousTime = timeMatch[3] ? timeMatch[3] : oldTime;
             existingItem.innerHTML = phone + ' (' + previousTime + ') => (' + currentTime + ')';
         } else {
             existingItem.innerHTML = phone + ' (' + currentTime + ')';
         }
+
+        // Сохраняем историю в локальном хранилище
+        localStorage.setItem('linksHistory', document.getElementById('history').innerHTML);
+
         return existingItem.outerHTML;
     } else {
         // Создаем новый элемент с указанием времени
