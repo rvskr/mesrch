@@ -22,8 +22,6 @@ function highlightCurrentPhoneNumber() {
     historyItems.forEach(item => item.classList.remove('selected'));
 }
 
-
-
 // Функция проверки буфера обмена на наличие номера телефона при загрузке страницы
 async function checkClipboardForPhoneNumber() {
     try {
@@ -75,18 +73,18 @@ function generateLinks() {
         // Приведение номера телефона к единому формату
         phone = normalizePhoneNumber(phone);
 
-// Проверка на дублирование в истории
-var existingItems = historyDiv.querySelectorAll('.history-item');
-var alreadyExists = Array.from(existingItems).find(item => item.dataset.phone === phone);
+        // Проверка на дублирование в истории
+        var existingItems = historyDiv.querySelectorAll('.history-item');
+        var alreadyExists = Array.from(existingItems).find(item => item.dataset.phone === phone);
 
-if (alreadyExists) {
-    // Обновляем элемент истории с текущим временем
-    historyHTML = generateHistoryEntry(phone);
-} else {
-    // Генерируем новый элемент истории с текущим временем
-    historyHTML = generateHistoryEntry(phone);
-}
-
+        var historyHTML;
+        if (alreadyExists) {
+            // Обновляем элемент истории с текущим временем
+            historyHTML = generateHistoryEntry(phone, true);
+        } else {
+            // Генерируем новый элемент истории с текущим временем
+            historyHTML = generateHistoryEntry(phone, false);
+        }
 
         if (alreadyExists) {
             // Удаление подсветки со всех элементов истории
@@ -100,13 +98,8 @@ if (alreadyExists) {
             linksHTML += generateLink("Viber", "viber://chat?number=" + encodeURIComponent(phone), "viber");
             linksHTML += generateLink("Telegram", "https://t.me/" + encodeURIComponent(phone), "telegram");
 
-// Вставка нового элемента в историю с обновлением времени
-var historyHTML = generateHistoryEntry(phone);
-
-// Вывод ссылок и обновление истории на странице
-linksDiv.innerHTML = linksHTML;
-historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
-
+            // Вставка нового элемента в историю с обновлением времени
+            historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
 
             // Установка класса selected для нового элемента истории
             var newHistoryItem = historyDiv.querySelector('.history-item');
@@ -157,21 +150,27 @@ function generateLink(name, url, id) {
 }
 
 // Функция генерации HTML для истории с добавлением времени или обновлением времени, если номер уже существует
-function generateHistoryEntry(phone) {
+function generateHistoryEntry(phone, exists) {
     var currentTime = new Date().toLocaleString(); // Получаем текущее время в формате строки
     var existingItems = Array.from(document.querySelectorAll('.history-item'));
     var existingItem = existingItems.find(item => item.dataset.phone === phone);
 
-    if (existingItem) {
+    if (exists && existingItem) {
         // Обновляем время для существующего элемента
-        existingItem.innerHTML = phone + ' (' + currentTime + ')';
+        var timeMatch = existingItem.innerText.match(/\(([^)]+)\)( => \(([^)]+)\))?/);
+        if (timeMatch) {
+            var oldTime = timeMatch[1];
+            var previousTime = timeMatch[3] ? timeMatch[3] : currentTime;
+            existingItem.innerHTML = phone + ' (' + previousTime + ') => (' + currentTime + ')';
+        } else {
+            existingItem.innerHTML = phone + ' (' + currentTime + ')';
+        }
         return existingItem.outerHTML;
     } else {
         // Создаем новый элемент с указанием времени
         return '<p class="history-item" data-phone="' + phone + '" onclick="showLinks(this, \'' + phone + '\')">' + phone + ' (' + currentTime + ')</p>';
     }
 }
-
 
 // Функция отображения ссылок для выбранного номера телефона
 function showLinks(element, phone) {
