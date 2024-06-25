@@ -112,7 +112,7 @@ function generateLinks() {
             localStorage.setItem('linksHistory', historyDiv.innerHTML);
 
             // Отображение сообщения об обновлении
-            showUpdateMessage();
+            showUpdateMessage("Ссылки обновлены");
         }
 
         // Показываем ссылки для выбранного номера
@@ -157,14 +157,11 @@ function generateHistoryEntry(phone, exists) {
 
     if (exists && existingItem) {
         // Обновляем время для существующего элемента
-        var timeMatch = existingItem.innerText.match(/\(([^)]+)\)( => \(([^)]+)\))?/);
-        if (timeMatch) {
-            var oldTime = timeMatch[1];
-            var previousTime = timeMatch[3] ? timeMatch[3] : oldTime;
-            existingItem.innerHTML = phone + ' (' + previousTime + ') => (' + currentTime + ')';
-        } else {
-            existingItem.innerHTML = phone + ' (' + currentTime + ')';
-        }
+        var timeList = existingItem.dataset.times ? existingItem.dataset.times.split('|') : [];
+        timeList.push(currentTime);
+        existingItem.dataset.times = timeList.join('|');
+        var displayedTimes = timeList.slice(-2).join(' => '); // Показываем только последние 2 времени
+        existingItem.innerHTML = phone + ' (' + displayedTimes + ')';
 
         // Сохраняем историю в локальном хранилище
         localStorage.setItem('linksHistory', document.getElementById('history').innerHTML);
@@ -172,7 +169,7 @@ function generateHistoryEntry(phone, exists) {
         return existingItem.outerHTML;
     } else {
         // Создаем новый элемент с указанием времени
-        return '<p class="history-item" data-phone="' + phone + '" onclick="showLinks(this, \'' + phone + '\')">' + phone + ' (' + currentTime + ')</p>';
+        return '<p class="history-item" data-phone="' + phone + '" data-times="' + currentTime + '" onclick="handleHistoryClick(event, \'' + phone + '\')" onmousedown="handleHistoryMouseDown(event, \'' + phone + '\')" onmouseup="handleHistoryMouseUp(event)">' + phone + ' (' + currentTime + ')</p>';
     }
 }
 
@@ -193,13 +190,13 @@ function showLinks(element, phone) {
     element.classList.add('selected');
 
     // Отображение сообщения об обновлении
-    showUpdateMessage();
+    showUpdateMessage("Ссылки обновлены");
 }
 
 // Функция отображения сообщения об обновлении
-function showUpdateMessage() {
+function showUpdateMessage(message) {
     var updateDiv = document.getElementById("update");
-    updateDiv.innerText = "Ссылки обновлены";
+    updateDiv.innerText = message;
     setTimeout(function(){
         updateDiv.innerText = "";
     }, 5000);
@@ -209,4 +206,45 @@ function showUpdateMessage() {
 function clearHistory() {
     localStorage.removeItem('linksHistory');
     document.getElementById("history").innerHTML = "";
+}
+
+// Функция для обработки однократного нажатия на элемент истории
+async function handleHistoryClick(event, phone) {
+    if (event.detail === 1) { // Проверка на одиночный клик
+        try {
+            await navigator.clipboard.writeText(phone);
+            showUpdateMessage("Номер скопирован: " + phone);
+        } catch (err) {
+            console.error('Ошибка при копировании номера: ', err);
+        }
+        showLinks(event.target, phone);
+    }
+}
+
+// Переменные для обработки длительного нажатия
+let longPressTimer;
+let isLongPress = false;
+
+// Функция для обработки начала зажатия на элементе истории
+function handleHistoryMouseDown(event, phone) {
+    isLongPress = false;
+    longPressTimer = setTimeout(() => {
+        isLongPress = true;
+        showFullHistory(phone);
+    }, 500); // Время задержки для распознавания длительного нажатия
+}
+
+// Функция для обработки конца зажатия на элементе истории
+function handleHistoryMouseUp(event) {
+    clearTimeout(longPressTimer);
+}
+
+// Функция для отображения полной истории времени для номера телефона
+function showFullHistory(phone) {
+    var historyItems = Array.from(document.querySelectorAll('.history-item'));
+    var historyItem = historyItems.find(item => item.dataset.phone === phone);
+    if (historyItem) {
+        var times = historyItem.dataset.times.split('|').join('\n');
+        alert('История для ' + phone + ':\n' + times); // Отображение полной истории времени в виде всплывающего сообщения
+    }
 }
