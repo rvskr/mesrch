@@ -17,15 +17,12 @@ window.onload = function() {
 // Функция для подсветки текущего номера в истории при загрузке страницы
 function highlightCurrentPhoneNumber() {
     var historyItems = document.querySelectorAll('.history-item');
-    var savedPhone = localStorage.getItem('lastPhoneNumber');
 
-    if (savedPhone) {
-        var currentHistoryItem = Array.from(historyItems).find(item => item.innerText.trim() === savedPhone);
-        if (currentHistoryItem) {
-            currentHistoryItem.classList.add('selected');
-        }
-    }
+    // Убираем класс 'selected' у всех элементов истории
+    historyItems.forEach(item => item.classList.remove('selected'));
 }
+
+
 
 // Функция проверки буфера обмена на наличие номера телефона при загрузке страницы
 async function checkClipboardForPhoneNumber() {
