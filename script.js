@@ -8,7 +8,7 @@ window.onload = function() {
     }
 
     // Автоматически вставляем номер из буфера обмена
-    pasteFromClipboard();
+    checkClipboardForPhoneNumber();
 
     // Подсветка текущего номера в истории, если он есть
     highlightCurrentPhoneNumber();
