@@ -1,6 +1,6 @@
 {
     "name": "Генератор ссылок",
-    "short_name": "Номера",
+    "short_name": "Генератор ссылок",
     "start_url": "/mesrch/index.html",
     "display": "standalone",
     "background_color": "#ffffff",

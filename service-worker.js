@@ -1,4 +1,4 @@
-const CACHE_NAME = 'links-generator-cache-v1.1'; // Обновите версию кэша
+const CACHE_NAME = 'links-generator-cache-v1.2'; // Обновите версию кэша
 const urlsToCache = [
   '/mesrch/',
   '/mesrch/index.html',
