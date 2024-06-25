@@ -1,10 +1,10 @@
 const CACHE_NAME = 'links-generator-cache-v1';
 const urlsToCache = [
   '/',
-  'index.html',
-  'script.js',
-  'styles.css',
-  'manifest.json',
+  '/mesrch/index.html',
+  '/mesrch/script.js',
+  '/mesrch/styles.css',
+  '/mesrch/manifest.json',
   'icon.png'
 ];
 

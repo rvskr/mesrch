@@ -33,15 +33,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/1.7.50/libphonenumber-js.min.js"></script>
     <script src="script.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-              console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, function(err) {
-              console.error('ServiceWorker registration failed: ', err);
-            });
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/mesrch/service-worker.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            console.error('ServiceWorker registration failed: ', err);
           });
-        }
+        });
+      }
       </script>
+      
 </body>
 </html>
