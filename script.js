@@ -5,15 +5,15 @@ window.onload = function() {
     var savedHistory = localStorage.getItem('linksHistory');
     if (savedHistory) {
         document.getElementById('history').innerHTML = savedHistory;
-        
     }
 
-    // Проверяем буфер обмена при загрузке страницы
-    checkClipboardForPhoneNumber();
+    // Автоматически вставляем номер из буфера обмена
+    pasteFromClipboard();
 
     // Подсветка текущего номера в истории, если он есть
     highlightCurrentPhoneNumber();
 };
+
 // Функция для подсветки текущего номера в истории при загрузке страницы
 function highlightCurrentPhoneNumber() {
     var historyItems = document.querySelectorAll('.history-item');
@@ -22,14 +22,10 @@ function highlightCurrentPhoneNumber() {
     if (savedPhone) {
         var currentHistoryItem = Array.from(historyItems).find(item => item.innerText.trim() === savedPhone);
         if (currentHistoryItem) {
-            // Удаление класса .selected у всех элементов истории
-            historyItems.forEach(item => item.classList.remove('selected'));
+            currentHistoryItem.classList.add('selected');
         }
     }
 }
-
-
-
 
 // Функция проверки буфера обмена на наличие номера телефона
 async function checkClipboardForPhoneNumber() {
@@ -37,15 +33,17 @@ async function checkClipboardForPhoneNumber() {
         const clipboardText = await navigator.clipboard.readText();
         const phonePattern = /^\+?[0-9\s\-]+$/; // Регулярное выражение для проверки номера телефона
 
-        if (phonePattern.test(clipboardText.trim()) && clipboardText.trim() !== lastClipboardPhone) {
-            lastClipboardPhone = clipboardText.trim();
-            if (confirm(`Обнаружен номер телефона в буфере обмена: ${clipboardText.trim()}. Хотите вставить его?`)) {
-                document.getElementById("phone").value = clipboardText.trim();
-                generateLinks(); // Автоматическая генерация ссылок
-            }
+        const normalizedPhone = normalizePhoneNumber(clipboardText.trim());
+
+        // Вставляем номер из буфера обмена, если он прошел проверку
+        if (phonePattern.test(clipboardText.trim()) && normalizedPhone !== lastClipboardPhone) {
+            lastClipboardPhone = normalizedPhone;
+            document.getElementById("phone").value = normalizedPhone;
+            generateLinks(); // Автоматическая генерация ссылок
         }
     } catch (err) {
         console.error('Ошибка при чтении буфера обмена: ', err);
+        alert('Не удалось прочитать буфер обмена.');
     }
 }
 
@@ -54,8 +52,12 @@ async function pasteFromClipboard() {
     try {
         const clipboardText = await navigator.clipboard.readText();
         const phonePattern = /^\+?[0-9\s\-]+$/; // Регулярное выражение для проверки номера телефона
+
+        const normalizedPhone = normalizePhoneNumber(clipboardText.trim());
+
+        // Вставляем номер из буфера обмена, если он прошел проверку
         if (phonePattern.test(clipboardText.trim())) {
-            document.getElementById("phone").value = clipboardText.trim();
+            document.getElementById("phone").value = normalizedPhone;
             generateLinks(); // Автоматическая генерация ссылок
         } else {
             alert("Буфер обмена не содержит допустимый номер телефона.");
@@ -67,7 +69,7 @@ async function pasteFromClipboard() {
 }
 
 // Функция генерации ссылок
-async function generateLinks() {
+function generateLinks() {
     var phoneInput = document.getElementById("phone");
     var phone = phoneInput.value.trim();
     var linksDiv = document.getElementById("links");
@@ -102,7 +104,7 @@ async function generateLinks() {
 
             // Установка класса selected для нового элемента истории
             var newHistoryItem = historyDiv.querySelector('.history-item');
-            newHistoryItem.classList.add('selected'); // Убрано из этой части кода, т.к. установка будет только при активном выборе
+            newHistoryItem.classList.add('selected');
 
             // Сохранение последнего использованного номера в локальное хранилище
             localStorage.setItem('lastPhoneNumber', phone);
@@ -120,7 +122,6 @@ async function generateLinks() {
         linksDiv.innerHTML = "<p>Введите номер телефона</p>";
     }
 }
-
 
 // Функция для приведения номера телефона к единому формату
 function normalizePhoneNumber(phone) {
@@ -147,18 +148,6 @@ function normalizePhoneNumber(phone) {
 // Функция генерации HTML для ссылки
 function generateLink(name, url, id) {
     return '<a href="' + url + '" target="_blank" id="' + id + '">' + name + '</a>';
-}
-
-// Функция сохранения номера в истории, если его там ещё нет
-function saveToHistory(phone) {
-    var historyDiv = document.getElementById("history");
-    var existingHistory = historyDiv.innerHTML;
-
-    if (!existingHistory.includes(phone)) {
-        var historyHTML = generateHistoryEntry(phone);
-        historyDiv.innerHTML = historyHTML + historyDiv.innerHTML;
-        localStorage.setItem('linksHistory', historyDiv.innerHTML);
-    }
 }
 
 // Функция генерации HTML для истории
