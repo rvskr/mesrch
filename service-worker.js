@@ -34,6 +34,10 @@ self.addEventListener('activate', function(event) {
         })
       );
     })
+    .then(function() {
+      console.log('Cache cleared for old versions');
+      return self.clients.claim();
+    })
   );
 });
 
@@ -72,3 +76,32 @@ self.addEventListener('fetch', function(event) {
       })
   );
 });
+
+// Добавляем обработчик события установки, чтобы выводить текущую версию CACHE_NAME при загрузке страницы
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+
+// Добавляем обработчик события активации, чтобы выводить новую версию CACHE_NAME при обновлении
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(existingCacheName) {
+          if (existingCacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', existingCacheName);
+            return caches.delete(existingCacheName);
+          }
+        })
+      );
+    })
+    .then(function() {
+      console.log('New version is now active');
+    })
+  );
+});
+  
