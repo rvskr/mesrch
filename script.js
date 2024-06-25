@@ -27,7 +27,7 @@ function highlightCurrentPhoneNumber() {
     }
 }
 
-// Функция проверки буфера обмена на наличие номера телефона
+// Функция проверки буфера обмена на наличие номера телефона при загрузке страницы
 async function checkClipboardForPhoneNumber() {
     try {
         const clipboardText = await navigator.clipboard.readText();
@@ -43,11 +43,10 @@ async function checkClipboardForPhoneNumber() {
         }
     } catch (err) {
         console.error('Ошибка при чтении буфера обмена: ', err);
-        alert('Не удалось прочитать буфер обмена.');
     }
 }
 
-// Функция для вставки номера из буфера обмена
+// Функция для вставки номера из буфера обмена по кнопке
 async function pasteFromClipboard() {
     try {
         const clipboardText = await navigator.clipboard.readText();
