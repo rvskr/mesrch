@@ -54,11 +54,11 @@ async function pasteFromClipboard() {
             document.getElementById("phone").value = normalizedPhone;
             generateLinks(); // Автоматическая генерация ссылок
         } else {
-            alert("Буфер обмена не содержит допустимый номер телефона.");
+            showUpdateMessage("Буфер обмена не содержит допустимый номер телефона.");
         }
     } catch (err) {
         console.error('Ошибка при чтении буфера обмена: ', err);
-        alert('Не удалось прочитать буфер обмена.');
+        showUpdateMessage('Не удалось прочитать буфер обмена.');
     }
 }
 
@@ -169,7 +169,7 @@ function generateHistoryEntry(phone, exists) {
         return existingItem.outerHTML;
     } else {
         // Создаем новый элемент с указанием времени
-        return '<p class="history-item" data-phone="' + phone + '" data-times="' + currentTime + '" onclick="handleHistoryClick(event, \'' + phone + '\')" onmousedown="handleHistoryMouseDown(event, \'' + phone + '\')" onmouseup="handleHistoryMouseUp(event)">' + phone + ' (' + currentTime + ')</p>';
+        return '<p class="history-item" data-phone="' + phone + '" data-times="' + currentTime + '" onclick="handleHistoryClick(event, \'' + phone + '\')">' + phone + ' (' + currentTime + ')</p>';
     }
 }
 
@@ -221,24 +221,6 @@ async function handleHistoryClick(event, phone) {
     }
 }
 
-// Переменные для обработки длительного нажатия
-let longPressTimer;
-let isLongPress = false;
-
-// Функция для обработки начала зажатия на элементе истории
-function handleHistoryMouseDown(event, phone) {
-    isLongPress = false;
-    longPressTimer = setTimeout(() => {
-        isLongPress = true;
-        showFullHistory(phone);
-    }, 500); // Время задержки для распознавания длительного нажатия
-}
-
-// Функция для обработки конца зажатия на элементе истории
-function handleHistoryMouseUp(event) {
-    clearTimeout(longPressTimer);
-}
-
 // Функция для отображения полной истории времени для номера телефона
 function showFullHistory(phone) {
     var historyItems = Array.from(document.querySelectorAll('.history-item'));
@@ -246,5 +228,16 @@ function showFullHistory(phone) {
     if (historyItem) {
         var times = historyItem.dataset.times.split('|').join('\n');
         alert('История для ' + phone + ':\n' + times); // Отображение полной истории времени в виде всплывающего сообщения
+    }
+}
+
+// Функция для отображения полной истории времени по кнопке
+function showFullHistoryManually() {
+    var selectedHistoryItem = document.querySelector('.history-item.selected');
+    if (selectedHistoryItem) {
+        var phone = selectedHistoryItem.dataset.phone;
+        showFullHistory(phone);
+    } else {
+        showUpdateMessage('Выберите номер из истории для просмотра полной истории.');
     }
 }
